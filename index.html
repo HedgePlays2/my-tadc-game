@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Amazing Digital Circus — Digital Void</title>
+
+<!-- Puter.js -->
+<script src="https://js.puter.com/v2/"></script>
+
+<!-- Three.js -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #09001a;
+        font-family: "Courier New", monospace;
+        color: white;
+    }
+
+    body {
+        image-rendering: pixelated;
+    }
+
+    #game {
+        position: fixed;
+        inset: 0;
+    }
+
+    canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* =========================
+       CRT / 90s CGI EFFECT
+       ========================= */
+
+    #crt {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 20;
+
+        background:
+            repeating-linear-gradient(
+                to bottom,
+                rgba(255,255,255,0.035) 0px,
+                rgba(255,255,255,0.035) 1px,
+                transparent 2px,
+                transparent 4px
+            );
+
+        mix-blend-mode: screen;
+        opacity: .42;
+    }
+
+    #vignette {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 19;
+
+        background:
+            radial-gradient(
+                ellipse at center,
+                transparent 45%,
+                rgba(0,0,0,.72) 100%
+            );
+    }
+
+    /* =========================
+       HUD
+       ========================= */
+
+    #hud {
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        z-index: 10;
+
+        padding: 12px 16px;
+
+        background: rgba(8, 0, 25, .72);
+        border: 2px solid #fff;
+        box-shadow:
+            5px 5px 0 #ff00a8,
+            -3px -3px 0 #00ffff;
+
+        font-size: 13px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    #hud .title {
+        font-size: 17px;
+        color: #fff;
+        text-shadow:
+            2px 2px #ff00a8,
+            -2px -2px #00ffff;
+        margin-bottom: 8px;
+    }
+
+    #status {
+        color: #6ff;
+    }
+
+    #crosshair {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        width: 18px;
+        height: 18px;
+        transform: translate(-50%, -50%);
+        z-index: 9;
+        pointer-events: none;
+    }
+
+    #crosshair::before,
+    #crosshair::after {
+        content: "";
+        position: absolute;
+        background: white;
+        box-shadow: 0 0 4px #00ffff;
+    }
+
+    #crosshair::before {
+        width: 18px;
+        height: 2px;
+        top: 8px;
+        left: 0;
+    }
+
+    #crosshair::after {
+        width: 2px;
+        height: 18px;
+        left: 8px;
+        top: 0;
+    }
+
+    /* =========================
+       NPC PANEL
+       ========================= */
+
+    #npcPanel {
+        position: fixed;
+        left: 50%;
+        bottom: 25px;
+        transform: translateX(-50%);
+
+        width: min(680px, calc(100% - 30px));
+
+        z-index: 15;
+
+        display: none;
+
+        background: rgba(11, 0, 30, .94);
+        border: 3px solid white;
+
+        box-shadow:
+            7px 7px 0 #ff0088,
+            -5px -5px 0 #00ffff;
+    }
+
+    #npcHeader {
+        padding: 8px 12px;
+
+        background: linear-gradient(
+            90deg,
+            #ff0099,
+            #8d00ff,
+            #00c8ff
+        );
+
+        color: white;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+
+    #dialogue {
+        min-height: 90px;
+        padding: 16px;
+
+        line-height: 1.5;
+        font-size: 15px;
+        color: #fff;
+    }
+
+    #dialogueInput {
+        width: calc(100% - 120px);
+        margin: 0 10px 12px 12px;
+        padding: 10px;
+
+        background: #090015;
+        color: white;
+
+        border: 2px solid #00ffff;
+
+        font-family: inherit;
+        outline: none;
+    }
+
+    #talkButton {
+        width: 90px;
+        padding: 10px;
+
+        background: #ff0088;
+        color: white;
+
+        border: 2px solid white;
+
+        font-family: inherit;
+        font-weight: bold;
+
+        cursor: pointer;
+    }
+
+    #talkButton:hover {
+        background: #00aaff;
+    }
+
+    #npcHint {
+        position: fixed;
+        left: 50%;
+        bottom: 12px;
+        transform: translateX(-50%);
+
+        z-index: 8;
+
+        font-size: 12px;
+        color: rgba(255,255,255,.8);
+        pointer-events: none;
+    }
+
+    /* =========================
+       START SCREEN
+       ========================= */
+
+    #startScreen {
+        position: fixed;
+        inset: 0;
+
+        z-index: 30;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background:
+            radial-gradient(
+                circle at center,
+                #5e008f 0%,
+                #180025 45%,
+                #05000d 100%
+            );
+    }
+
+    #startBox {
+        width: min(700px, calc(100% - 30px));
+
+        text-align: center;
+
+        padding: 35px;
+
+        background: rgba(8,0,20,.88);
+
+        border: 4px solid white;
+
+        box-shadow:
+            12px 12px 0 #ff0099,
+            -8px -8px 0 #00ffff;
+    }
+
+    #startBox h1 {
+        margin: 0;
+
+        font-size: clamp(28px, 6vw, 58px);
+
+        line-height: .95;
+
+        text-transform: uppercase;
+
+        color: white;
+
+        text-shadow:
+            4px 4px #ff0088,
+            -4px -4px #00ffff;
+    }
+
+    #startBox h2 {
+        margin: 15px 0 25px;
+
+        color: #ffdc00;
+
+        font-size: 17px;
+    }
+
+    #startBox p {
+        line-height: 1.6;
+        color: #ddd;
+    }
+
+    #startButton {
+        margin-top: 20px;
+
+        padding: 14px 32px;
+
+        background: #ff0088;
+
+        border: 3px solid white;
+
+        color: white;
+
+        font-family: inherit;
+        font-weight: bold;
+
+        font-size: 16px;
+
+        cursor: pointer;
+
+        box-shadow: 5px 5px 0 #00ffff;
+    }
+
+    #startButton:hover {
+        transform: translate(-2px, -2px);
+        background: #7d00ff;
+    }
+
+    #puterStatus {
+        margin-top: 15px;
+        font-size: 11px;
+        color: #aaa;
+    }
+
+    #puterFooter {
+        position: fixed;
+        bottom: 7px;
+        right: 10px;
+
+        z-index: 50;
+
+        font-size: 10px;
+
+        opacity: .55;
+    }
+
+    #puterFooter a {
+        color: white;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="game"></div>
+
+<div id="crt"></div>
+<div id="vignette"></div>
+
+<div id="hud">
+    <div class="title">DIGITAL CIRCUS // VOID</div>
+    <div>W A S D — MOVE</div>
+    <div>SHIFT — RUN</div>
+    <div>SPACE — JUMP</div>
+    <div>E — TALK</div>
+    <div id="status">SYSTEM: WAITING...</div>
+</div>
+
+<div id="crosshair"></div>
+
+<div id="npcHint">
+    Approach the strange object-head...
+</div>
+
+<div id="npcPanel">
+    <div id="npcHeader">OBJECT-HEAD // AI CONNECTION</div>
+
+    <div id="dialogue">
+        ...
+    </div>
+
+    <input
+        id="dialogueInput"
+        placeholder="Say something..."
+        autocomplete="off"
+    >
+
+    <button id="talkButton">SEND</button>
+</div>
+
+<div id="startScreen">
+
+    <div id="startBox">
+
+        <h1>
+            THE AMAZING<br>
+            DIGITAL CIRCUS
+        </h1>
+
+        <h2>
+            DIGITAL VOID // BUILD 1999.??.???
+        </h2>
+
+        <p>
+            Welcome to a place that absolutely should not exist.
+            <br><br>
+            Explore the endless checkerboard void.
+            Find the strange object-head in the center.
+            And whatever you do...
+            <br>
+            <b>DO NOT ASK WHERE YOU ARE.</b>
+        </p>
+
+        <button id="startButton">
+            ENTER THE CIRCUS
+        </button>
+
+        <div id="puterStatus">
+            AI SYSTEM: CONNECTING...
+        </div>
+
+    </div>
+
+</div>
+
+<div id="puterFooter">
+    Powered by <a href="https://developer.puter.com" target="_blank">Puter</a>
+</div>
+
+<script>
+/* ============================================================
+   THE AMAZING DIGITAL CIRCUS
+   DIGITAL VOID
+   Single-file Three.js + Puter.js game
+   ============================================================ */
+
+
+/* ============================================================
+   GLOBALS
+   ============================================================ */
+
+let scene;
+let camera;
+let renderer;
+let clock;
+
+let player;
+let playerVelocity = new THREE.Vector3();
+
+let keys = {};
+
+let started = false;
+
+let npc;
+let npcDistance = Infinity;
+
+let canTalk = false;
+
+const WORLD_SIZE = 500;
+
+const moveSpeed = 7;
+const runSpeed = 13;
+
+const gravity = -24;
+
+let verticalVelocity = 0;
+
+let playerGrounded = true;
+
+let aiBusy = false;
+
+
+/* ============================================================
+   DOM
+   ============================================================ */
+
+const startScreen =
+    document.getElementById("startScreen");
+
+const startButton =
+    document.getElementById("startButton");
+
+const puterStatus =
+    document.getElementById("puterStatus");
+
+const status =
+    document.getElementById("status");
+
+const npcPanel =
+    document.getElementById("npcPanel");
+
+const dialogue =
+    document.getElementById("dialogue");
+
+const dialogueInput =
+    document.getElementById("dialogueInput");
+
+const talkButton =
+    document.getElementById("talkButton");
+
+const npcHint =
+    document.getElementById("npcHint");
+
+
+/* ============================================================
+   THREE.JS INITIALIZATION
+   ============================================================ */
+
+function initThree() {
+
+    scene = new THREE.Scene();
+
+    scene.background =
+        new THREE.Color(0x120020);
+
+    scene.fog =
+        new THREE.FogExp2(
+            0x120020,
+            0.012
+        );
+
+
+    /* CAMERA */
+
+    camera =
+        new THREE.PerspectiveCamera(
+            70,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+
+    camera.position.set(
+        0,
+        3,
+        7
+    );
+
+
+    /* RENDERER */
+
+    renderer =
+        new THREE.WebGLRenderer({
+            antialias: false
+        });
+
+    renderer.setPixelRatio(
+        Math.min(
+            window.devicePixelRatio,
+            2
+        )
+    );
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+
+    renderer.shadowMap.enabled = true;
+
+    renderer.shadowMap.type =
+        THREE.BasicShadowMap;
+
+    document
+        .getElementById("game")
+        .appendChild(renderer.domElement);
+
+
+    clock = new THREE.Clock();
+
+
+    /* LIGHTING */
+
+    const ambient =
+        new THREE.AmbientLight(
+            0xffffff,
+            1.5
+        );
+
+    scene.add(ambient);
+
+
+    const moonLight =
+        new THREE.DirectionalLight(
+            0xffffff,
+            2
+        );
+
+    moonLight.position.set(
+        20,
+        40,
+        10
+    );
+
+    moonLight.castShadow = true;
+
+    scene.add(moonLight);
+
+
+    /* BUILD WORLD */
+
+    createCheckerboard();
+
+    createCircusBackground();
+
+    createPlayer();
+
+    createNPC();
+
+    createDecorations();
+
+
+    window.addEventListener(
+        "resize",
+        onResize
+    );
+
+
+    requestAnimationFrame(
+        animate
+    );
+}
+
+
+/* ============================================================
+   CHECKERBOARD FLOOR
+   ============================================================ */
+
+function createCheckerboard() {
+
+    const tileSize = 5;
+
+    const tiles = 100;
+
+    const geometry =
+        new THREE.BoxGeometry(
+            tileSize,
+            0.35,
+            tileSize
+        );
+
+
+    for (
+        let x = -tiles / 2;
+        x < tiles / 2;
+        x++
+    ) {
+
+        for (
+            let z = -tiles / 2;
+            z < tiles / 2;
+            z++
+        ) {
+
+            const even =
+                (x + z) % 2 === 0;
+
+            const material =
+                new THREE.MeshLambertMaterial({
+                    color:
+                        even
+                            ? 0xff007f
+                            : 0x3911ff
+                });
+
+            const tile =
+                new THREE.Mesh(
+                    geometry,
+                    material
+                );
+
+            tile.position.set(
+                x * tileSize,
+                -0.25,
+                z * tileSize
+            );
+
+            tile.receiveShadow = true;
+
+            scene.add(tile);
+        }
+    }
+
+
+    /* CENTRAL CIRCUS RING */
+
+    const ringGeometry =
+        new THREE.RingGeometry(
+            10,
+            11,
+            32
+        );
+
+    const ringMaterial =
+        new THREE.MeshBasicMaterial({
+            color: 0xffff00,
+            side: THREE.DoubleSide
+        });
+
+    const ring =
+        new THREE.Mesh(
+            ringGeometry,
+            ringMaterial
+        );
+
+    ring.rotation.x =
+        -Math.PI / 2;
+
+    ring.position.y =
+        0.02;
+
+    scene.add(ring);
+}
+
+
+/* ============================================================
+   BACKGROUND CIRCUS TENT
+   ============================================================ */
+
+function createCircusBackground() {
+
+    const tentGeometry =
+        new THREE.ConeGeometry(
+            70,
+            55,
+            32,
+            1,
+            true
+        );
+
+    const tentMaterial =
+        new THREE.MeshBasicMaterial({
+            color: 0x6500a8,
+            side: THREE.BackSide,
+            transparent: true,
+            opacity: .45
+        });
+
+    const tent =
+        new THREE.Mesh(
+            tentGeometry,
+            tentMaterial
+        );
+
+    tent.position.y =
+        22;
+
+    scene.add(tent);
+
+
+    /* GIANT STRIPES */
+
+    for (
+        let i = 0;
+        i < 16;
+        i++
+    ) {
+
+        const angle =
+            (i / 16) *
+            Math.PI *
+            2;
+
+        const radius = 68;
+
+        const pole =
+            new THREE.Mesh(
+                new THREE.CylinderGeometry(
+                    0.35,
+                    0.35,
+                    45,
+                    8
+                ),
+                new THREE.MeshBasicMaterial({
+                    color:
+                        i % 2
+                            ? 0xff0088
+                            : 0x00ffff
+                })
+            );
+
+        pole.position.set(
+            Math.cos(angle) * radius,
+            20,
+            Math.sin(angle) * radius
+        );
+
+        scene.add(pole);
+    }
+
+
+    /* FLOATING GIANT BALLS */
+
+    const ballColors = [
+        0xff0088,
+        0x00ffff,
+        0xffff00,
+        0x8d00ff,
+        0x00ff55
+    ];
+
+    for (
+        let i = 0;
+        i < 20;
+        i++
+    ) {
+
+        const geometry =
+            new THREE.SphereGeometry(
+                2 + Math.random() * 4,
+                12,
+                8
+            );
+
+        const material =
+            new THREE.MeshBasicMaterial({
+                color:
+                    ballColors[
+                        i % ballColors.length
+                    ]
+            });
+
+        const ball =
+            new THREE.Mesh(
+                geometry,
+                material
+            );
+
+        const angle =
+            Math.random() *
+            Math.PI *
+            2;
+
+        const radius =
+            35 + Math.random() * 70;
+
+        ball.position.set(
+            Math.cos(angle) * radius,
+            5 + Math.random() * 30,
+            Math.sin(angle) * radius
+        );
+
+        scene.add(ball);
+    }
+}
+
+
+/* ============================================================
+   PLAYER
+   ============================================================ */
+
+function createPlayer() {
+
+    const group =
+        new THREE.Group();
+
+
+    /* BODY */
+
+    const body =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                1.4,
+                2.2,
+                1.2
+            ),
+            new THREE.MeshLambertMaterial({
+                color: 0x00d9ff
+            })
+        );
+
+    body.position.y = 1.1;
+
+    body.castShadow = true;
+
+    group.add(body);
+
+
+    /* HEAD */
+
+    const head =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                1.6,
+                1.1,
+                1.5
+            ),
+            new THREE.MeshLambertMaterial({
+                color: 0xffdc00
+            })
+        );
+
+    head.position.y = 2.7;
+
+    head.castShadow = true;
+
+    group.add(head);
+
+
+    /* EYES */
+
+    for (
+        let i = -1;
+        i <= 1;
+        i += 2
+    ) {
+
+        const eye =
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    .25,
+                    .25,
+                    .08
+                ),
+                new THREE.MeshBasicMaterial({
+                    color: 0x000000
+                })
+            );
+
+        eye.position.set(
+            i * .35,
+            2.75,
+            -.76
+        );
+
+        group.add(eye);
+    }
+
+
+    /* LEGS */
+
+    for (
+        let i = -1;
+        i <= 1;
+        i += 2
+    ) {
+
+        const leg =
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    .45,
+                    .8,
+                    .45
+                ),
+                new THREE.MeshLambertMaterial({
+                    color: 0xff007f
+                })
+            );
+
+        leg.position.set(
+            i * .38,
+            -.4,
+            0
+        );
+
+        leg.castShadow = true;
+
+        group.add(leg);
+    }
+
+
+    player = group;
+
+    player.position.set(
+        0,
+        0,
+        25
+    );
+
+    scene.add(player);
+}
+
+
+/* ============================================================
+   NPC
+   ============================================================ */
+
+function createNPC() {
+
+    npc =
+        new THREE.Group();
+
+
+    /* MAIN OBJECT HEAD */
+
+    const head =
+        new THREE.Mesh(
+            new THREE.IcosahedronGeometry(
+                2.8,
+                1
+            ),
+            new THREE.MeshLambertMaterial({
+                color: 0xffd500,
+                flatShading: true
+            })
+        );
+
+    head.castShadow = true;
+
+    npc.add(head);
+
+
+    /* EYE */
+
+    const eye =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .75,
+                8,
+                6
+            ),
+            new THREE.MeshBasicMaterial({
+                color: 0x08000e
+            })
+        );
+
+    eye.position.set(
+        0,
+        .45,
+        -2.55
+    );
+
+    npc.add(eye);
+
+
+    /* EYE GLOW */
+
+    const glow =
+        new THREE.PointLight(
+            0xff00aa,
+            5,
+            15
+        );
+
+    glow.position.set(
+        0,
+        .5,
+        -2
+    );
+
+    npc.add(glow);
+
+
+    /* ANTENNAS */
+
+    for (
+        let i = -1;
+        i <= 1;
+        i += 2
+    ) {
+
+        const antenna =
+            new THREE.Mesh(
+                new THREE.CylinderGeometry(
+                    .12,
+                    .12,
+                    3,
+                    8
+                ),
+                new THREE.MeshBasicMaterial({
+                    color:
+                        i < 0
+                            ? 0x00ffff
+                            : 0xff0088
+                })
+            );
+
+        antenna.rotation.z =
+            i * .35;
+
+        antenna.position.set(
+            i * 1.5,
+            3,
+            0
+        );
+
+        npc.add(antenna);
+    }
+
+
+    /* FLOATING RING */
+
+    const ring =
+        new THREE.Mesh(
+            new THREE.TorusGeometry(
+                3.8,
+                .15,
+                8,
+                24
+            ),
+            new THREE.MeshBasicMaterial({
+                color: 0x00ffff
+            })
+        );
+
+    ring.rotation.x =
+        Math.PI / 2;
+
+    npc.add(ring);
+
+
+    npc.position.set(
+        0,
+        3,
+        0
+    );
+
+    scene.add(npc);
+}
+
+
+/* ============================================================
+   RANDOM 90s CGI DECORATIONS
+   ============================================================ */
+
+function createDecorations() {
+
+    const colors = [
+        0xff0099,
+        0x00ffff,
+        0xffff00,
+        0x7d00ff,
+        0x00ff77
+    ];
+
+
+    for (
+        let i = 0;
+        i < 100;
+        i++
+    ) {
+
+        const geometry =
+            Math.random() > .5
+                ? new THREE.BoxGeometry(
+                    1 + Math.random() * 4,
+                    1 + Math.random() * 4,
+                    1 + Math.random() * 4
+                )
+                : new THREE.ConeGeometry(
+                    1 + Math.random() * 2,
+                    3 + Math.random() * 4,
+                    6
+                );
+
+
+        const material =
+            new THREE.MeshLambertMaterial({
+                color:
+                    colors[
+                        Math.floor(
+                            Math.random() *
+                            colors.length
+                        )
+                    ],
+                flatShading: true
+            });
+
+
+        const object =
+            new THREE.Mesh(
+                geometry,
+                material
+            );
+
+
+        const angle =
+            Math.random() *
+            Math.PI *
+            2;
+
+        const radius =
+            15 + Math.random() * 150;
+
+
+        object.position.set(
+            Math.cos(angle) * radius,
+            Math.random() * 8,
+            Math.sin(angle) * radius
+        );
+
+
+        object.rotation.set(
+            Math.random() * Math.PI,
+            Math.random() * Math.PI,
+            Math.random() * Math.PI
+        );
+
+
+        object.castShadow = true;
+
+        scene.add(object);
+    }
+}
+
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+
+window.addEventListener(
+    "keydown",
+    e => {
+
+        keys[e.code] = true;
+
+        if (
+            e.code === "Space" &&
+            playerGrounded
+        ) {
+
+            verticalVelocity = 10;
+
+            playerGrounded = false;
+        }
+
+
+        if (
+            e.code === "KeyE" &&
+            canTalk
+        ) {
+
+            openDialogue();
+        }
+    }
+);
+
+
+window.addEventListener(
+    "keyup",
+    e => {
+
+        keys[e.code] = false;
+    }
+);
+
+
+/* ============================================================
+   PLAYER MOVEMENT
+   ============================================================ */
+
+function updatePlayer(delta) {
+
+    if (!started)
+        return;
+
+
+    let forward = 0;
+    let sideways = 0;
+
+
+    if (keys["KeyW"])
+        forward += 1;
+
+    if (keys["KeyS"])
+        forward -= 1;
+
+    if (keys["KeyA"])
+        sideways -= 1;
+
+    if (keys["KeyD"])
+        sideways += 1;
+
+
+    const length =
+        Math.hypot(
+            forward,
+            sideways
+        );
+
+
+    if (length > 0) {
+
+        forward /= length;
+        sideways /= length;
+    }
+
+
+    const speed =
+        keys["ShiftLeft"] ||
+        keys["ShiftRight"]
+            ? runSpeed
+            : moveSpeed;
+
+
+    player.position.x +=
+        sideways *
+        speed *
+        delta;
+
+
+    player.position.z -=
+        forward *
+        speed *
+        delta;
+
+
+    /* BOUNDARY */
+
+    player.position.x =
+        THREE.MathUtils.clamp(
+            player.position.x,
+            -WORLD_SIZE / 2,
+            WORLD_SIZE / 2
+        );
+
+    player.position.z =
+        THREE.MathUtils.clamp(
+            player.position.z,
+            -WORLD_SIZE / 2,
+            WORLD_SIZE / 2
+        );
+
+
+    /* JUMP */
+
+    verticalVelocity +=
+        gravity * delta;
+
+    player.position.y +=
+        verticalVelocity * delta;
+
+
+    if (
+        player.position.y <= 0
+    ) {
+
+        player.position.y = 0;
+
+        verticalVelocity = 0;
+
+        playerGrounded = true;
+    }
+
+
+    /* CAMERA */
+
+    const cameraTarget =
+        new THREE.Vector3(
+            player.position.x,
+            player.position.y + 3.2,
+            player.position.z
+        );
+
+
+    const desiredCamera =
+        new THREE.Vector3(
+            player.position.x,
+            player.position.y + 8,
+            player.position.z + 11
+        );
+
+
+    camera.position.lerp(
+        desiredCamera,
+        5 * delta
+    );
+
+
+    camera.lookAt(
+        cameraTarget
+    );
+
+
+    /* NPC DISTANCE */
+
+    npcDistance =
+        player.position.distanceTo(
+            npc.position
+        );
+
+
+    canTalk =
+        npcDistance < 9;
+
+
+    if (canTalk) {
+
+        npcHint.innerText =
+            "PRESS E TO TALK TO THE OBJECT-HEAD";
+
+        npcHint.style.color =
+            "#00ffff";
+
+    } else {
+
+        npcHint.innerText =
+            "Explore the Digital Void...";
+
+        npcHint.style.color =
+            "rgba(255,255,255,.8)";
+    }
+}
+
+
+/* ============================================================
+   NPC ANIMATION
+   ============================================================ */
+
+function updateNPC(time) {
+
+    if (!npc)
+        return;
+
+
+    npc.position.y =
+        3 +
+        Math.sin(time * 2) * .5;
+
+
+    npc.rotation.y =
+        Math.sin(time * .35) * .6;
+
+
+    const ring =
+        npc.children.find(
+            obj =>
+                obj.geometry &&
+                obj.geometry.type === "TorusGeometry"
+        );
+
+
+    if (ring) {
+
+        ring.rotation.z =
+            time * .8;
+    }
+}
+
+
+/* ============================================================
+   AI CHARACTER SYSTEM
+   ============================================================ */
+
+/*
+    This is a behavior prompt rather than model training.
+
+    The AI is instructed to act like a Digital Circus NPC
+    and to draw from the personalities and behavior patterns
+    established by the show.
+
+    It can respond dynamically to whatever the player says.
+*/
+
+const CHARACTER_MEMORY = `
+
+You are an AI character living inside a surreal digital circus world.
+
+You should behave as if you are one of the inhabitants of
+The Amazing Digital Circus.
+
+Your behavior should be inspired by the established personalities,
+relationships, comedic timing, fears, anxieties, optimism,
+sarcasm, chaos, and bizarre situations of the original show.
+
+IMPORTANT:
+
+- Do not claim you are literally the real actors.
+- Do not say you are a language model unless directly asked.
+- Stay in-character.
+- Treat the Digital Circus as your reality.
+- Keep responses conversational.
+- Never become a generic assistant.
+- You can be funny, uncomfortable, nervous, sarcastic,
+  cheerful, chaotic, or unsettling depending on the situation.
+- Remember that the circus is bizarre and dangerous.
+- Characters have their own opinions and emotional reactions.
+- Do not simply repeat the user's words.
+- Occasionally reference circus logic, adventures,
+  the void, strange digital objects, or other inhabitants.
+- If the player asks about escaping, react as a character would.
+- If the player asks who controls the circus, be suspicious.
+- If the player asks about Caine, respond as someone who
+  actually lives under his rules.
+- If the player asks about Jax, Ragatha, Pomni, Gangle,
+  Kinger, Zooble, or other established characters,
+  respond consistently with their recognizable personalities.
+
+The NPC standing in front of the player is a surreal
+OBJECT-HEAD entity.
+
+The NPC does not need to have one fixed canonical identity.
+It can act like a strange digital circus resident whose
+personality shifts depending on the conversation.
+
+The player is currently exploring a mysterious empty section
+of the Digital Circus.
+
+The player has just approached you.
+
+Keep most responses between 1 and 4 sentences.
+`;
+
+async function askAI(message) {
+
+    if (aiBusy)
+        return;
+
+    aiBusy = true;
+
+    talkButton.disabled = true;
+
+    status.innerText =
+        "SYSTEM: AI THINKING...";
+
+
+    dialogue.innerText =
+        "The object-head stares at you...\n\n[thinking]";
+
+
+    try {
+
+        const prompt =
+            CHARACTER_MEMORY +
+            `
+
+PLAYER MESSAGE:
+"${message}"
+
+Respond directly to the player as the strange
+Digital Circus character.`;
+
+        const response =
+            await puter.ai.chat(
+                prompt,
+                {
+                    model: "gpt-5.4-nano"
+                }
+            );
+
+
+        let text = "";
+
+
+        if (
+            typeof response === "string"
+        ) {
+
+            text = response;
+
+        } else if (
+            response &&
+            response.message &&
+            response.message.content
+        ) {
+
+            text =
+                response.message.content;
+
+        } else if (
+            response &&
+            response.text
+        ) {
+
+            text = response.text;
+
+        } else {
+
+            text =
+                "The object-head appears to have forgotten how words work.";
+        }
+
+
+        dialogue.innerText =
+            text;
+
+
+        status.innerText =
+            "SYSTEM: AI ONLINE";
+
+    } catch (error) {
+
+        console.error(error);
+
+        dialogue.innerText =
+            "OBJECT-HEAD:\n\n" +
+            "\"Uh... something just broke. " +
+            "And I don't think it was supposed to.\"";
+
+
+        status.innerText =
+            "SYSTEM: AI ERROR";
+    }
+
+
+    aiBusy = false;
+
+    talkButton.disabled = false;
+}
+
+
+/* ============================================================
+   DIALOGUE
+   ============================================================ */
+
+function openDialogue() {
+
+    npcPanel.style.display =
+        "block";
+
+    dialogueInput.focus();
+
+
+    if (
+        dialogue.innerText === "..."
+    ) {
+
+        dialogue.innerText =
+            "OBJECT-HEAD:\n\n" +
+            "\"Oh! A visitor! In this part of the circus? " +
+            "That's... probably fine.\"";
+    }
+}
+
+
+async function sendDialogue() {
+
+    const message =
+        dialogueInput.value.trim();
+
+
+    if (!message || aiBusy)
+        return;
+
+
+    dialogueInput.value = "";
+
+
+    dialogue.innerText =
+        "YOU:\n" +
+        message +
+        "\n\nOBJECT-HEAD:\n\n" +
+        "Thinking...";
+
+
+    await askAI(message);
+}
+
+
+talkButton.addEventListener(
+    "click",
+    sendDialogue
+);
+
+
+dialogueInput.addEventListener(
+    "keydown",
+    e => {
+
+        if (
+            e.key === "Enter"
+        ) {
+
+            sendDialogue();
+        }
+    }
+);
+
+
+/* ============================================================
+   START GAME
+   ============================================================ */
+
+startButton.addEventListener(
+    "click",
+    () => {
+
+        started = true;
+
+        startScreen.style.display =
+            "none";
+
+        status.innerText =
+            "SYSTEM: DIGITAL VOID ONLINE";
+
+        /* Browser audio/input unlock */
+
+        document.body.focus();
+    }
+);
+
+
+/* ============================================================
+   PUTER CHECK
+   ============================================================ */
+
+async function checkPuter() {
+
+    try {
+
+        if (
+            typeof puter !== "undefined" &&
+            puter.ai
+        ) {
+
+            puterStatus.innerText =
+                "AI SYSTEM: ONLINE // PUTER.JS READY";
+
+        } else {
+
+            puterStatus.innerText =
+                "AI SYSTEM: UNAVAILABLE";
+        }
+
+    } catch (error) {
+
+        puterStatus.innerText =
+            "AI SYSTEM: ERROR";
+    }
+}
+
+
+/* ============================================================
+   RESIZE
+   ============================================================ */
+
+function onResize() {
+
+    camera.aspect =
+        window.innerWidth /
+        window.innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+}
+
+
+/* ============================================================
+   MAIN LOOP
+   ============================================================ */
+
+function animate() {
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    const delta =
+        Math.min(
+            clock.getDelta(),
+            .05
+        );
+
+
+    const elapsed =
+        clock.elapsedTime;
+
+
+    updatePlayer(delta);
+
+    updateNPC(elapsed);
+
+
+    /* Slight old-school camera wobble */
+
+    if (started) {
+
+        camera.position.y +=
+            Math.sin(
+                elapsed * 3
+            ) * .003;
+    }
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+}
+
+
+/* ============================================================
+   START
+   ============================================================ */
+
+initThree();
+
+checkPuter();
+
+</script>
+
+</body>
+</html>
