@@ -3,26 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Amazing Digital Circus</title>
 
-<title>The Amazing Digital Circus - Hub</title>
-
-<!-- THREE.JS -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-
-<!-- THREE.JS GLB/GLTF LOADER -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
-
-<!-- PUTER.JS -->
 <script src="https://js.puter.com/v2/"></script>
 
 <style>
-
 * {
     box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
     margin: 0;
     width: 100%;
     height: 100%;
@@ -41,51 +31,29 @@ canvas {
 ========================= */
 
 #intro {
-
     position: fixed;
-
     inset: 0;
-
-    z-index: 100;
-
+    z-index: 1000;
     display: flex;
-
-    justify-content: center;
-
     align-items: center;
-
+    justify-content: center;
     background:
-        radial-gradient(
-            circle at center,
-            #7300b8,
-            #21002f 45%,
-            #050007 100%
-        );
-
-    transition:
-        opacity .7s,
-        visibility .7s;
+        radial-gradient(circle at center, #7800b8 0%, #250035 45%, #050007 100%);
+    transition: opacity .6s ease, visibility .6s ease;
 }
 
 #intro.hidden {
-
     opacity: 0;
-
     visibility: hidden;
+    pointer-events: none;
 }
 
 .intro-card {
-
     width: min(760px, 92vw);
-
-    padding: 45px;
-
+    padding: 42px;
     text-align: center;
-
-    background: rgba(5,0,15,.95);
-
+    background: rgba(5,0,15,.96);
     border: 3px solid white;
-
     box-shadow:
         10px 10px #ff008c,
         -8px -8px #00eaff,
@@ -93,87 +61,95 @@ canvas {
 }
 
 .intro-small {
-
     color: #00ffff;
-
     font-size: 11px;
-
     letter-spacing: 5px;
-
     margin-bottom: 20px;
 }
 
 .intro-card h1 {
-
     margin: 0;
-
-    font-family:
-        Impact,
-        "Arial Black",
-        sans-serif;
-
-    font-size:
-        clamp(38px, 8vw, 80px);
-
+    font-family: Impact, "Arial Black", sans-serif;
+    font-size: clamp(38px, 8vw, 80px);
     line-height: .85;
-
     text-shadow:
         5px 5px #ff008c,
         -4px -4px #00eaff;
 }
 
 .intro-card h2 {
-
     color: #ffe600;
-
     font-size: 13px;
-
     letter-spacing: 3px;
-
     margin: 28px 0;
 }
 
 .intro-card p {
-
     color: #ccc;
-
     font-size: 13px;
-
     line-height: 1.6;
 }
 
 #enterButton {
-
     margin-top: 20px;
-
-    padding:
-        15px 40px;
-
-    border:
-        3px solid white;
-
+    padding: 15px 40px;
+    border: 3px solid white;
     background: #ff008c;
-
     color: white;
-
     font-family: inherit;
-
     font-weight: bold;
-
     cursor: pointer;
-
-    box-shadow:
-        6px 6px #00eaff;
-
+    box-shadow: 6px 6px #00eaff;
     transition: .15s;
 }
 
 #enterButton:hover {
-
-    transform:
-        translate(-3px,-3px);
-
+    transform: translate(-3px,-3px);
     background: #7d00ff;
+}
+
+#enterButton:active {
+    transform: translate(2px,2px);
+    box-shadow: 2px 2px #00eaff;
+}
+
+/* =========================
+   LOADING
+========================= */
+
+#loading {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 900;
+    width: 250px;
+    padding: 12px;
+    background: rgba(5,0,15,.9);
+    border: 2px solid #00ffff;
+    font-size: 10px;
+    transition: opacity .4s;
+}
+
+#loading.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-title {
+    margin-bottom: 8px;
+    color: #00ffff;
+}
+
+.loading-bar {
+    height: 7px;
+    border: 1px solid white;
+}
+
+#loadingProgress {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff008c, #00ffff);
+    transition: width .15s;
 }
 
 /* =========================
@@ -181,69 +157,41 @@ canvas {
 ========================= */
 
 #hud {
-
     position: fixed;
-
-    z-index: 10;
-
+    z-index: 20;
     top: 18px;
-
     left: 18px;
-
     width: 250px;
-
     padding: 15px;
-
-    background:
-        rgba(5,0,15,.82);
-
-    border-left:
-        3px solid #00ffff;
-
-    border-bottom:
-        3px solid #ff008c;
-
+    background: rgba(5,0,15,.82);
+    border-left: 3px solid #00ffff;
+    border-bottom: 3px solid #ff008c;
     pointer-events: none;
 }
 
 .hud-title {
-
-    font-family:
-        Impact,
-        "Arial Black",
-        sans-serif;
-
+    font-family: Impact, "Arial Black", sans-serif;
     font-size: 20px;
-
     text-shadow:
         2px 2px #ff008c,
         -2px -2px #00ffff;
-
     margin-bottom: 10px;
 }
 
 .hud-line {
-
     color: #aaa;
-
     font-size: 10px;
-
     margin: 5px 0;
 }
 
 .hud-line b {
-
     color: white;
 }
 
 #system {
-
     margin-top: 12px;
-
     color: #00ffff;
-
     font-size: 9px;
-
     letter-spacing: 1px;
 }
 
@@ -252,114 +200,64 @@ canvas {
 ========================= */
 
 #location {
-
     position: fixed;
-
     top: 18px;
-
     right: 20px;
-
-    z-index: 10;
-
+    z-index: 20;
     text-align: right;
-
     color: #999;
-
     font-size: 9px;
-
     pointer-events: none;
 }
 
 #location strong {
-
     display: block;
-
     color: white;
-
     font-size: 15px;
-
     letter-spacing: 2px;
 }
 
 /* =========================
-   CHARACTER LABEL
+   NPC LABEL
 ========================= */
 
 #characterName {
-
     position: fixed;
-
     left: 50%;
-
     top: 42%;
-
-    transform:
-        translate(-50%, -50%);
-
-    z-index: 11;
-
-    font-family:
-        Impact,
-        "Arial Black",
-        sans-serif;
-
+    transform: translate(-50%, -50%);
+    z-index: 21;
+    font-family: Impact, "Arial Black", sans-serif;
     font-size: 27px;
-
     letter-spacing: 4px;
-
     text-shadow:
         3px 3px #ff008c,
         -3px -3px #00ffff;
-
     opacity: 0;
-
     transition: opacity .2s;
-
     pointer-events: none;
 }
 
 #characterName.show {
-
     opacity: 1;
 }
 
-/* =========================
-   INTERACTION
-========================= */
-
 #interaction {
-
     position: fixed;
-
     left: 50%;
-
     bottom: 42px;
-
-    transform:
-        translateX(-50%);
-
-    z-index: 11;
-
-    padding:
-        10px 20px;
-
-    border:
-        2px solid white;
-
-    background:
-        rgba(5,0,15,.9);
-
+    transform: translateX(-50%);
+    z-index: 30;
+    padding: 10px 20px;
+    border: 2px solid white;
+    background: rgba(5,0,15,.9);
     font-size: 11px;
-
     opacity: 0;
-
     transition: opacity .2s;
-
     pointer-events: none;
 }
 
 #interaction.show {
-
     opacity: 1;
 }
 
@@ -368,232 +266,91 @@ canvas {
 ========================= */
 
 #dialogue {
-
     position: fixed;
-
     left: 50%;
-
     bottom: 18px;
-
-    transform:
-        translateX(-50%);
-
-    width:
-        min(800px,94vw);
-
-    z-index: 50;
-
+    transform: translateX(-50%);
+    width: min(800px,94vw);
+    z-index: 100;
     display: none;
-
-    background:
-        rgba(6,0,15,.98);
-
-    border:
-        3px solid white;
-
+    background: rgba(6,0,15,.98);
+    border: 3px solid white;
     box-shadow:
         8px 8px #ff008c,
         -5px -5px #00eaff;
 }
 
 #dialogue.open {
-
     display: block;
 }
 
 #speaker {
-
-    padding:
-        10px 15px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #ff008c,
-            #7d00ff,
-            #00bfff
-        );
-
+    padding: 10px 15px;
+    background: linear-gradient(90deg,#ff008c,#7d00ff,#00bfff);
     font-weight: bold;
-
     letter-spacing: 2px;
-
     font-size: 12px;
 }
 
 #dialogueText {
-
     min-height: 90px;
-
     padding: 17px;
-
     line-height: 1.55;
-
     font-size: 13px;
-
     white-space: pre-wrap;
 }
 
 #dialogueControls {
-
     display: flex;
-
     gap: 8px;
-
-    padding:
-        0 12px 12px;
+    padding: 0 12px 12px;
 }
 
 #message {
-
     flex: 1;
-
     padding: 11px;
-
     background: #09000f;
-
-    border:
-        2px solid #00ffff;
-
+    border: 2px solid #00ffff;
     color: white;
-
     outline: none;
-
     font-family: inherit;
 }
 
 #send {
-
-    padding:
-        0 20px;
-
+    padding: 0 20px;
     background: #ff008c;
-
     color: white;
-
-    border:
-        2px solid white;
-
+    border: 2px solid white;
     font-family: inherit;
-
     font-weight: bold;
-
     cursor: pointer;
-}
-
-#send:hover {
-
-    background: #00aaff;
 }
 
 #send:disabled {
-
     opacity: .5;
-
-    cursor: wait;
 }
 
 #closeDialogue {
-
     position: absolute;
-
     right: 8px;
-
     top: 5px;
-
     border: 0;
-
     background: none;
-
     color: white;
-
     font-size: 20px;
-
     cursor: pointer;
 }
 
 /* =========================
-   LOADING
-========================= */
-
-#loading {
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 90;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    flex-direction: column;
-
-    background:
-        #07000c;
-
-    font-size: 12px;
-
-    letter-spacing: 3px;
-
-    transition: opacity .4s;
-}
-
-#loading.hidden {
-
-    opacity: 0;
-
-    pointer-events: none;
-}
-
-.loading-bar {
-
-    width:
-        min(400px,80vw);
-
-    height: 8px;
-
-    margin-top: 20px;
-
-    border:
-        2px solid white;
-}
-
-#loadingProgress {
-
-    width: 0%;
-
-    height: 100%;
-
-    background:
-        linear-gradient(
-            90deg,
-            #ff008c,
-            #00ffff
-        );
-
-    transition: width .2s;
-}
-
-/* =========================
-   CRT EFFECT
+   CRT
 ========================= */
 
 #scanlines {
-
     position: fixed;
-
     inset: 0;
-
     pointer-events: none;
-
-    z-index: 20;
-
-    opacity: .22;
-
+    z-index: 200;
+    opacity: .18;
     background:
         repeating-linear-gradient(
             to bottom,
@@ -605,15 +362,10 @@ canvas {
 }
 
 #vignette {
-
     position: fixed;
-
     inset: 0;
-
     pointer-events: none;
-
-    z-index: 19;
-
+    z-index: 199;
     background:
         radial-gradient(
             circle,
@@ -622,60 +374,22 @@ canvas {
         );
 }
 
-/* =========================
-   MOBILE
-========================= */
-
 @media(max-width:600px) {
-
     #hud {
-
         width: 190px;
-
     }
 
     #location {
-
         display: none;
-
-    }
-
-    #dialogueText {
-
-        font-size: 12px;
-
     }
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- =========================
-     LOADING SCREEN
-========================= -->
-
-<div id="loading">
-
-    <div>
-        LOADING DIGITAL CIRCUS...
-    </div>
-
-    <div class="loading-bar">
-
-        <div id="loadingProgress"></div>
-
-    </div>
-
-</div>
-
-<!-- =========================
-     INTRO
-========================= -->
-
+<!-- INTRO -->
 <div id="intro">
-
     <div class="intro-card">
 
         <div class="intro-small">
@@ -692,36 +406,32 @@ canvas {
         </h2>
 
         <p>
-
             Welcome to the Digital Circus.
-
             <br><br>
-
-            Explore the hub and meet the circus
-            members.
-
+            Explore the hub and meet the circus members.
             <br><br>
-
-            <b>
-                Something is watching.
-            </b>
-
+            <b>Something is watching.</b>
         </p>
 
         <button id="enterButton">
-
             ENTER THE CIRCUS
-
         </button>
 
     </div>
-
 </div>
 
-<!-- =========================
-     HUD
-========================= -->
+<!-- BACKGROUND LOADING -->
+<div id="loading">
+    <div class="loading-title">
+        LOADING POMNI...
+    </div>
 
+    <div class="loading-bar">
+        <div id="loadingProgress"></div>
+    </div>
+</div>
+
+<!-- HUD -->
 <div id="hud">
 
     <div class="hud-title">
@@ -745,53 +455,29 @@ canvas {
     </div>
 
     <div id="system">
-        SYSTEM: LOADING
+        SYSTEM: READY
     </div>
 
 </div>
 
-<!-- =========================
-     LOCATION
-========================= -->
-
 <div id="location">
-
     CURRENT AREA
-
-    <strong>
-        THE HUB
-    </strong>
-
+    <strong>THE HUB</strong>
 </div>
-
-<!-- =========================
-     CHARACTER LABEL
-========================= -->
 
 <div id="characterName"></div>
 
-<!-- =========================
-     INTERACTION
-========================= -->
-
 <div id="interaction">
-
     PRESS E TO TALK
-
 </div>
 
-<!-- =========================
-     DIALOGUE
-========================= -->
-
+<!-- DIALOGUE -->
 <div id="dialogue">
 
-    <button id="closeDialogue">
-        ×
-    </button>
+    <button id="closeDialogue">×</button>
 
     <div id="speaker">
-        CHARACTER
+        POMNI
     </div>
 
     <div id="dialogueText">
@@ -816,294 +502,188 @@ canvas {
 </div>
 
 <div id="scanlines"></div>
-
 <div id="vignette"></div>
 
-<script>
+<!-- THREE.JS -->
+<script type="module">
+
+import * as THREE from
+"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+
+import { GLTFLoader } from
+"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
+
 
 /* =========================================================
-   DIGITAL CIRCUS CHARACTER HUB
+   MODEL
 ========================================================= */
 
-/* =========================
-   POMNI MODEL
-========================= */
-
 const POMNI_MODEL_URL =
-    "https://raw.githubusercontent.com/HedgePlays2/my-tadc-game/main/pomni_low_poly_model.glb";
+"https://raw.githubusercontent.com/HedgePlays2/my-tadc-game/main/pomni_low_poly_model.glb";
 
 
-/* =========================
-   GLOBALS
-========================= */
+/* =========================================================
+   DOM
+========================================================= */
+
+const intro =
+document.getElementById("intro");
+
+const enterButton =
+document.getElementById("enterButton");
+
+const loading =
+document.getElementById("loading");
+
+const loadingProgress =
+document.getElementById("loadingProgress");
+
+const system =
+document.getElementById("system");
+
+const interaction =
+document.getElementById("interaction");
+
+const characterName =
+document.getElementById("characterName");
+
+const dialogue =
+document.getElementById("dialogue");
+
+const speaker =
+document.getElementById("speaker");
+
+const dialogueText =
+document.getElementById("dialogueText");
+
+const message =
+document.getElementById("message");
+
+const send =
+document.getElementById("send");
+
+const closeDialogue =
+document.getElementById("closeDialogue");
+
+const locationText =
+document.querySelector("#location strong");
+
+
+/* =========================================================
+   IMPORTANT:
+   THE ENTER BUTTON IS WIRED UP IMMEDIATELY.
+========================================================= */
+
+let gameStarted = false;
+
+enterButton.addEventListener("click", () => {
+
+    gameStarted = true;
+
+    intro.classList.add("hidden");
+
+    system.textContent =
+        "SYSTEM: ENTERING DIGITAL CIRCUS";
+
+    message.blur();
+
+});
+
+
+/* =========================================================
+   THREE VARIABLES
+========================================================= */
 
 let scene;
-
 let camera;
-
 let renderer;
-
 let clock;
 
 let player;
 
-let pomni;
+let pomni = null;
 
-let started = false;
-
-let grounded = true;
-
-let velocityY = 0;
+let pomniMixer = null;
 
 let activeNPC = null;
 
 let canInteract = false;
 
-let aiBusy = false;
+let velocityY = 0;
+
+let grounded = true;
 
 const keys = {};
 
 const npcs = [];
 
 
-const MOVE_SPEED = 7;
-
-const RUN_SPEED = 12;
-
-const GRAVITY = -25;
-
-
-/* =========================
-   DOM
-========================= */
-
-const intro =
-    document.getElementById("intro");
-
-const enterButton =
-    document.getElementById("enterButton");
-
-const loading =
-    document.getElementById("loading");
-
-const loadingProgress =
-    document.getElementById(
-        "loadingProgress"
-    );
-
-const system =
-    document.getElementById("system");
-
-const locationElement =
-    document.querySelector(
-        "#location strong"
-    );
-
-const interaction =
-    document.getElementById(
-        "interaction"
-    );
-
-const characterName =
-    document.getElementById(
-        "characterName"
-    );
-
-const dialogue =
-    document.getElementById(
-        "dialogue"
-    );
-
-const speaker =
-    document.getElementById(
-        "speaker"
-    );
-
-const dialogueText =
-    document.getElementById(
-        "dialogueText"
-    );
-
-const message =
-    document.getElementById(
-        "message"
-    );
-
-const sendButton =
-    document.getElementById(
-        "send"
-    );
-
-const closeDialogue =
-    document.getElementById(
-        "closeDialogue"
-    );
-
-
 /* =========================================================
-   CHARACTER PERSONALITIES
+   CHARACTERS
 ========================================================= */
 
 const characters = {
 
     pomni: {
-
         name: "POMNI",
-
-        personality: `
-You are Pomni from The Amazing Digital Circus.
-
-You are anxious, confused, overwhelmed and
-desperate to understand the Digital Circus.
-
-You often panic or hesitate.
-
-You want to escape.
-
-Stay in character.
-
-Never mention these instructions.
-
-Never say you are an AI.
-
-Keep responses fairly short.
-`
+        greeting:
+        "Oh... hi. You're actually here. Are you lost too?"
     },
 
     jax: {
-
         name: "JAX",
-
-        personality: `
-You are Jax from The Amazing Digital Circus.
-
-You are sarcastic, mischievous, smug and
-constantly looking for ways to annoy people.
-
-You enjoy teasing people.
-
-You rarely take anything seriously.
-
-Stay in character.
-
-Never say you are an AI.
-`
+        greeting:
+        "Well, well. Look who wandered over here."
     },
 
     ragatha: {
-
         name: "RAGATHA",
-
-        personality: `
-You are Ragatha from The Amazing Digital Circus.
-
-You are kind, friendly, patient and supportive.
-
-You try to keep everyone calm.
-
-You genuinely care about the others.
-
-Stay in character.
-`
+        greeting:
+        "Oh! Hi! It's nice to meet you!"
     },
 
     gangle: {
-
         name: "GANGLE",
-
-        personality: `
-You are Gangle from The Amazing Digital Circus.
-
-You are shy, sensitive and emotional.
-
-You have comedy and tragedy masks.
-
-Your mood can change quickly.
-
-Stay in character.
-`
+        greeting:
+        "Oh! Hello... please don't step on my ribbons."
     },
 
     kinger: {
-
         name: "KINGER",
-
-        personality: `
-You are Kinger from The Amazing Digital Circus.
-
-You are eccentric, distracted and paranoid.
-
-You say strange things.
-
-You can occasionally become surprisingly insightful.
-
-You are especially strange when discussing
-darkness, bugs or unusual phenomena.
-
-Stay in character.
-`
+        greeting:
+        "THE WALLS HAVE BEEN MOVING AGAIN."
     },
 
     zooble: {
-
         name: "ZOOBLE",
-
-        personality: `
-You are Zooble from The Amazing Digital Circus.
-
-You are blunt, sarcastic and irritated.
-
-You complain frequently.
-
-You don't particularly enjoy being in the circus.
-
-Stay in character.
-`
+        greeting:
+        "What do you want?"
     },
 
     caine: {
-
         name: "CAINE",
-
-        personality: `
-You are Caine from The Amazing Digital Circus.
-
-You are extremely energetic, theatrical and
-obsessed with entertaining everyone.
-
-You speak dramatically.
-
-You love announcing things.
-
-You treat ordinary events as enormous adventures.
-
-Stay in character.
-
-Never say you are an AI.
-`
+        greeting:
+        "WELCOME, WELCOME, WELCOME TO THE DIGITAL CIRCUS!"
     }
 
 };
 
 
 /* =========================================================
-   INIT
+   INIT WORLD
 ========================================================= */
 
 function init() {
 
-    scene =
-        new THREE.Scene();
+    scene = new THREE.Scene();
 
     scene.background =
-        new THREE.Color(
-            0x090014
-        );
+        new THREE.Color(0x090014);
 
     scene.fog =
         new THREE.FogExp2(
             0x090014,
-            .008
+            0.008
         );
 
 
@@ -1118,36 +698,21 @@ function init() {
 
     renderer =
         new THREE.WebGLRenderer({
-
             antialias: true,
-
-            powerPreference:
-                "high-performance"
-
+            powerPreference: "high-performance"
         });
 
 
     renderer.setPixelRatio(
-        Math.min(
-            devicePixelRatio,
-            2
-        )
+        Math.min(devicePixelRatio, 2)
     );
-
 
     renderer.setSize(
         innerWidth,
         innerHeight
     );
 
-
-    renderer.shadowMap.enabled =
-        true;
-
-
-    renderer.shadowMap.type =
-        THREE.PCFSoftShadowMap;
-
+    renderer.shadowMap.enabled = true;
 
     document.body.appendChild(
         renderer.domElement
@@ -1158,63 +723,57 @@ function init() {
         new THREE.Clock();
 
 
-    createLighting();
-
+    createLights();
     createFloor();
-
     createTent();
-
-    createCenterStage();
-
+    createStage();
     createPlayer();
 
     createCaine();
-
-    loadPomni();
-
     createJax();
-
     createRagatha();
-
     createGangle();
-
     createKinger();
-
     createZooble();
 
     createParticles();
 
-    createScenery();
-
-    setupInput();
+    setupControls();
 
     animate();
+
+
+    /*
+       Pomni is intentionally loaded LAST.
+
+       This means the world is already running
+       before the GLB finishes loading.
+    */
+
+    loadPomni();
 
 }
 
 
 /* =========================================================
-   LIGHTING
+   LIGHTS
 ========================================================= */
 
-function createLighting() {
+function createLights() {
 
-    const ambient =
+    scene.add(
         new THREE.AmbientLight(
             0xffffff,
             1.5
-        );
-
-    scene.add(
-        ambient
+        )
     );
 
 
     const sun =
-        new THREE.DirectionalLight(
-            0xffffff,
-            2
-        );
+    new THREE.DirectionalLight(
+        0xffffff,
+        2
+    );
 
     sun.position.set(
         20,
@@ -1222,63 +781,43 @@ function createLighting() {
         20
     );
 
-    sun.castShadow =
-        true;
+    sun.castShadow = true;
 
-    scene.add(
-        sun
-    );
+    scene.add(sun);
 
 
     const colors = [
-
         0xff008c,
-
         0x00ffff,
-
         0xffff00,
-
         0x7d00ff
-
     ];
 
 
-    for(
-        let i = 0;
-        i < 12;
-        i++
-    ) {
+    for(let i = 0; i < 12; i++) {
 
         const light =
-            new THREE.PointLight(
-                colors[
-                    i % colors.length
-                ],
-                8,
-                35
-            );
+        new THREE.PointLight(
+            colors[i % colors.length],
+            8,
+            35
+        );
 
 
         const angle =
-            i / 12 *
-            Math.PI *
-            2;
+        i / 12 *
+        Math.PI *
+        2;
 
 
         light.position.set(
-
             Math.cos(angle) * 20,
-
             6,
-
             Math.sin(angle) * 20
-
         );
 
 
-        scene.add(
-            light
-        );
+        scene.add(light);
 
     }
 
@@ -1286,76 +825,53 @@ function createLighting() {
 
 
 /* =========================================================
-   CHECKERBOARD FLOOR
+   CHECKERBOARD
 ========================================================= */
 
 function createFloor() {
 
-    const tileSize = 5;
-
+    const size = 5;
 
     const geometry =
-        new THREE.BoxGeometry(
-            tileSize,
-            .3,
-            tileSize
-        );
+    new THREE.BoxGeometry(
+        size,
+        .3,
+        size
+    );
 
 
-    for(
-        let x = -30;
-        x <= 30;
-        x++
-    ) {
+    for(let x = -30; x <= 30; x++) {
 
-        for(
-            let z = -30;
-            z <= 30;
-            z++
-        ) {
+        for(let z = -30; z <= 30; z++) {
 
             const material =
-                new THREE.MeshLambertMaterial({
+            new THREE.MeshLambertMaterial({
 
-                    color:
-                        (x + z) % 2 === 0
+                color:
+                (x + z) % 2 === 0
+                ? 0xff008c
+                : 0x3210c9
 
-                        ?
-
-                        0xff008c
-
-                        :
-
-                        0x3210c9
-
-                });
+            });
 
 
             const tile =
-                new THREE.Mesh(
-                    geometry,
-                    material
-                );
+            new THREE.Mesh(
+                geometry,
+                material
+            );
 
 
             tile.position.set(
-
-                x * tileSize,
-
+                x * size,
                 -.15,
-
-                z * tileSize
-
+                z * size
             );
 
 
-            tile.receiveShadow =
-                true;
+            tile.receiveShadow = true;
 
-
-            scene.add(
-                tile
-            );
+            scene.add(tile);
 
         }
 
@@ -1371,39 +887,35 @@ function createFloor() {
 function createTent() {
 
     const tent =
-        new THREE.Mesh(
+    new THREE.Mesh(
 
-            new THREE.ConeGeometry(
-                100,
-                65,
-                32,
-                1,
-                true
-            ),
+        new THREE.ConeGeometry(
+            100,
+            65,
+            32,
+            1,
+            true
+        ),
 
-            new THREE.MeshBasicMaterial({
+        new THREE.MeshBasicMaterial({
 
-                color: 0x4c0077,
+            color: 0x4c0077,
 
-                side:
-                    THREE.BackSide,
+            side:
+            THREE.BackSide,
 
-                transparent: true,
+            transparent: true,
 
-                opacity: .35
+            opacity: .35
 
-            })
+        })
 
-        );
-
-
-    tent.position.y =
-        30;
-
-
-    scene.add(
-        tent
     );
+
+
+    tent.position.y = 30;
+
+    scene.add(tent);
 
 }
 
@@ -1412,90 +924,67 @@ function createTent() {
    CENTER STAGE
 ========================================================= */
 
-function createCenterStage() {
+function createStage() {
 
     const stage =
+    new THREE.Mesh(
+
+        new THREE.CylinderGeometry(
+            13,
+            13,
+            .8,
+            48
+        ),
+
+        new THREE.MeshLambertMaterial({
+            color: 0x17121e
+        })
+
+    );
+
+
+    stage.position.y = .4;
+
+    stage.receiveShadow = true;
+
+    scene.add(stage);
+
+
+    const colors = [
+        0xff008c,
+        0x00ffff,
+        0xffff00,
+        0x7d00ff,
+        0xff4500
+    ];
+
+
+    for(let i = 0; i < 5; i++) {
+
+        const ring =
         new THREE.Mesh(
 
-            new THREE.CylinderGeometry(
-                13,
-                13,
-                .8,
-                48
+            new THREE.TorusGeometry(
+                5 + i * 1.6,
+                .12,
+                8,
+                64
             ),
 
-            new THREE.MeshLambertMaterial({
-                color: 0x17121e
+            new THREE.MeshBasicMaterial({
+                color: colors[i]
             })
 
         );
 
 
-    stage.position.y =
-        .4;
-
-
-    stage.receiveShadow =
-        true;
-
-
-    scene.add(
-        stage
-    );
-
-
-    const ringColors = [
-
-        0xff008c,
-
-        0x00ffff,
-
-        0xffff00,
-
-        0x7d00ff,
-
-        0xff4500
-
-    ];
-
-
-    for(
-        let i = 0;
-        i < 5;
-        i++
-    ) {
-
-        const ring =
-            new THREE.Mesh(
-
-                new THREE.TorusGeometry(
-                    5 + i * 1.6,
-                    .12,
-                    8,
-                    64
-                ),
-
-                new THREE.MeshBasicMaterial({
-
-                    color:
-                        ringColors[i]
-
-                })
-
-            );
-
-
         ring.rotation.x =
-            Math.PI / 2;
-
+        Math.PI / 2;
 
         ring.position.y =
-            .86 + i * .02;
+        .86 + i * .02;
 
-
-        scene.add(
-            ring
-        );
+        scene.add(ring);
 
     }
 
@@ -1509,199 +998,142 @@ function createCenterStage() {
 function createPlayer() {
 
     player =
-        new THREE.Group();
+    new THREE.Group();
 
 
     const body =
-        new THREE.Mesh(
+    new THREE.Mesh(
 
-            new THREE.BoxGeometry(
-                1.25,
-                1.8,
-                1
-            ),
+        new THREE.BoxGeometry(
+            1.25,
+            1.8,
+            1
+        ),
 
-            new THREE.MeshLambertMaterial({
-                color: 0x00cfff
-            })
+        new THREE.MeshLambertMaterial({
+            color: 0x00cfff
+        })
 
-        );
-
-
-    body.position.y =
-        1.35;
-
-
-    body.castShadow =
-        true;
-
-
-    player.add(
-        body
     );
+
+
+    body.position.y = 1.35;
+
+    body.castShadow = true;
+
+    player.add(body);
 
 
     const head =
+    new THREE.Mesh(
+
+        new THREE.BoxGeometry(
+            1.5,
+            1.15,
+            1.3
+        ),
+
+        new THREE.MeshLambertMaterial({
+            color: 0xffdd00
+        })
+
+    );
+
+
+    head.position.y = 2.8;
+
+    head.castShadow = true;
+
+    player.add(head);
+
+
+    for(const side of [-1,1]) {
+
+        const eye =
         new THREE.Mesh(
 
-            new THREE.BoxGeometry(
-                1.5,
-                1.15,
-                1.3
+            new THREE.SphereGeometry(
+                .14,
+                8,
+                6
             ),
 
-            new THREE.MeshLambertMaterial({
-                color: 0xffdd00
+            new THREE.MeshBasicMaterial({
+                color: 0x000000
             })
 
         );
 
 
-    head.position.y =
-        2.8;
-
-
-    head.castShadow =
-        true;
-
-
-    player.add(
-        head
-    );
-
-
-    for(
-        const side of [-1,1]
-    ) {
-
-        const eye =
-            new THREE.Mesh(
-
-                new THREE.SphereGeometry(
-                    .14,
-                    8,
-                    6
-                ),
-
-                new THREE.MeshBasicMaterial({
-                    color: 0x000000
-                })
-
-            );
-
-
         eye.position.set(
-
             side * .32,
-
             2.9,
-
             -.67
-
         );
 
 
-        player.add(
-            eye
-        );
+        player.add(eye);
 
 
         const leg =
-            new THREE.Mesh(
+        new THREE.Mesh(
 
-                new THREE.BoxGeometry(
-                    .4,
-                    .8,
-                    .45
-                ),
+            new THREE.BoxGeometry(
+                .4,
+                .8,
+                .45
+            ),
 
-                new THREE.MeshLambertMaterial({
-                    color: 0xff008c
-                })
+            new THREE.MeshLambertMaterial({
+                color: 0xff008c
+            })
 
-            );
+        );
 
 
         leg.position.set(
-
             side * .35,
-
             .1,
-
             0
-
         );
 
 
-        player.add(
-            leg
-        );
+        player.add(leg);
 
     }
 
 
     player.position.set(
-
         0,
-
         0,
-
         27
-
     );
 
 
-    scene.add(
-        player
-    );
+    scene.add(player);
 
 }
 
 
 /* =========================================================
-   NPC CREATOR
+   NPC BASE
 ========================================================= */
 
-function makeNPC(
-    id,
-    x,
-    z
-) {
+function makeNPC(id,x,z) {
 
     const npc =
-        new THREE.Group();
+    new THREE.Group();
 
-
-    npc.userData.id =
-        id;
-
-
-    npc.userData.label =
-        characters[id].name;
-
+    npc.userData.id = id;
 
     npc.userData.phase =
-        Math.random() *
-        Math.PI *
-        2;
+    Math.random() * Math.PI * 2;
 
+    npc.position.set(x,0,z);
 
-    npc.position.set(
-        x,
-        0,
-        z
-    );
+    scene.add(npc);
 
-
-    scene.add(
-        npc
-    );
-
-
-    npcs.push(
-        npc
-    );
-
+    npcs.push(npc);
 
     return npc;
 
@@ -1709,94 +1141,110 @@ function makeNPC(
 
 
 /* =========================================================
-   POMNI GLB LOADER
+   ACTUAL POMNI GLB
 ========================================================= */
 
 function loadPomni() {
 
     const loader =
-        new THREE.GLTFLoader();
+    new GLTFLoader();
 
 
     loader.load(
 
         POMNI_MODEL_URL,
 
-
-        function(gltf) {
+        gltf => {
 
             pomni =
-                makeNPC(
-                    "pomni",
-                    -15,
-                    -4
-                );
+            makeNPC(
+                "pomni",
+                -15,
+                -4
+            );
 
 
             const model =
-                gltf.scene;
+            gltf.scene;
 
 
-            model.scale.setScalar(
-                3
+            /*
+               Automatic scaling.
+
+               This prevents a model with unusual
+               Blender/Sketchfab units from being
+               ridiculously huge or tiny.
+            */
+
+            const box =
+            new THREE.Box3()
+            .setFromObject(model);
+
+
+            const size =
+            box.getSize(
+                new THREE.Vector3()
             );
 
 
-            model.position.y =
-                0;
+            const height =
+            size.y;
+
+
+            if(height > 0) {
+
+                const targetHeight = 4;
+
+                const scale =
+                targetHeight / height;
+
+                model.scale.setScalar(
+                    scale
+                );
+
+            }
+
+
+            model.position.y = 0;
 
 
             model.traverse(
-                function(object) {
+            object => {
 
-                    if(
-                        object.isMesh
-                    ) {
+                if(object.isMesh) {
 
-                        object.castShadow =
-                            true;
+                    object.castShadow = true;
 
-                        object.receiveShadow =
-                            true;
-
-                    }
+                    object.receiveShadow = true;
 
                 }
-            );
+
+            });
 
 
-            pomni.add(
-                model
-            );
+            pomni.add(model);
 
 
-            /* =========================
-               ANIMATIONS
-            ========================= */
+            /*
+               Play the first animation if
+               the GLB contains one.
+            */
 
             if(
                 gltf.animations &&
-                gltf.animations.length
+                gltf.animations.length > 0
             ) {
 
-                const mixer =
-                    new THREE.AnimationMixer(
-                        model
-                    );
-
-
-                pomni.userData.mixer =
-                    mixer;
-
-
-                pomni.userData.animations =
-                    gltf.animations;
+                pomniMixer =
+                new THREE.AnimationMixer(
+                    model
+                );
 
 
                 const action =
-                    mixer.clipAction(
-                        gltf.animations[0]
-                    );
+                pomniMixer.clipAction(
+                    gltf.animations[0]
+                );
 
 
                 action.play();
@@ -1805,49 +1253,70 @@ function loadPomni() {
 
 
             loadingProgress.style.width =
-                "100%";
+            "100%";
 
 
-            system.innerText =
-                "SYSTEM: POMNI ONLINE";
+            system.textContent =
+            "SYSTEM: POMNI ONLINE";
+
+
+            /*
+               Hide the background loading box
+               shortly after the model arrives.
+            */
+
+            setTimeout(() => {
+
+                loading.classList.add(
+                    "hidden"
+                );
+
+            },500);
 
         },
 
 
-        function(xhr) {
+        xhr => {
 
-            if(
-                xhr.total
-            ) {
+            if(xhr.total) {
 
                 const percent =
-                    xhr.loaded /
-                    xhr.total *
-                    100;
+                xhr.loaded /
+                xhr.total *
+                100;
 
 
                 loadingProgress.style.width =
-                    percent + "%";
+                percent + "%";
 
             }
 
         },
 
 
-        function(error) {
+        error => {
 
             console.error(
-                "Could not load Pomni:",
+                "Pomni GLB failed to load:",
                 error
             );
 
 
             loadingProgress.style.width =
-                "100%";
+            "100%";
 
 
-            system.innerText =
-                "SYSTEM: POMNI MODEL ERROR";
+            system.textContent =
+            "SYSTEM: POMNI LOAD ERROR";
+
+
+            setTimeout(() => {
+
+                loading.classList.add(
+                    "hidden"
+                );
+
+            },700);
 
         }
 
@@ -1857,7 +1326,7 @@ function loadPomni() {
 
 
 /* =========================================================
-   SIMPLE PLACEHOLDER CHARACTERS
+   EYES
 ========================================================= */
 
 function addEyes(
@@ -1867,40 +1336,32 @@ function addEyes(
     z
 ) {
 
-    for(
-        const side of [-1,1]
-    ) {
+    for(const side of [-1,1]) {
 
         const eye =
-            new THREE.Mesh(
+        new THREE.Mesh(
 
-                new THREE.SphereGeometry(
-                    .14,
-                    8,
-                    6
-                ),
+            new THREE.SphereGeometry(
+                .14,
+                8,
+                6
+            ),
 
-                new THREE.MeshBasicMaterial({
-                    color: 0x000000
-                })
+            new THREE.MeshBasicMaterial({
+                color: 0x000000
+            })
 
-            );
+        );
 
 
         eye.position.set(
-
             side * spacing,
-
             y,
-
             -z
-
         );
 
 
-        npc.add(
-            eye
-        );
+        npc.add(eye);
 
     }
 
@@ -1914,75 +1375,33 @@ function addEyes(
 function createCaine() {
 
     const npc =
-        makeNPC(
-            "caine",
-            0,
-            -8
-        );
+    makeNPC(
+        "caine",
+        0,
+        -8
+    );
 
 
     const body =
-        new THREE.Mesh(
+    new THREE.Mesh(
 
-            new THREE.CylinderGeometry(
-                1.2,
-                1.2,
-                2.7,
-                12
-            ),
+        new THREE.CylinderGeometry(
+            1.2,
+            1.2,
+            2.7,
+            12
+        ),
 
-            new THREE.MeshLambertMaterial({
-                color: 0xffffff
-            })
-
-        );
-
-
-    body.position.y =
-        1.5;
-
-
-    npc.add(
-        body
-    );
-
-
-    const mouth =
-        new THREE.Mesh(
-
-            new THREE.TorusGeometry(
-                .8,
-                .2,
-                8,
-                24,
-                Math.PI
-            ),
-
-            new THREE.MeshBasicMaterial({
-                color: 0x080008
-            })
-
-        );
-
-
-    mouth.position.set(
-
-        0,
-
-        1.8,
-
-        -1.15
+        new THREE.MeshLambertMaterial({
+            color: 0xffffff
+        })
 
     );
 
 
-    mouth.rotation.x =
-        Math.PI / 2;
+    body.position.y = 1.5;
 
-
-    npc.add(
-        mouth
-    );
+    npc.add(body);
 
 
     addEyes(
@@ -2002,53 +1421,49 @@ function createCaine() {
 function createJax() {
 
     const npc =
-        makeNPC(
-            "jax",
-            15,
-            -4
-        );
-
-
-    const body =
-        new THREE.Mesh(
-
-            new THREE.CapsuleGeometry(
-                .75,
-                1.5,
-                6,
-                12
-            ),
-
-            new THREE.MeshLambertMaterial({
-                color: 0x914cff
-            })
-
-        );
-
-
-    body.position.y =
-        1.5;
-
-
-    npc.add(
-        body
+    makeNPC(
+        "jax",
+        15,
+        -4
     );
 
 
+    const body =
+    new THREE.Mesh(
+
+        new THREE.CapsuleGeometry(
+            .75,
+            1.5,
+            6,
+            12
+        ),
+
+        new THREE.MeshLambertMaterial({
+            color: 0x914cff
+        })
+
+    );
+
+
+    body.position.y = 1.5;
+
+    npc.add(body);
+
+
     const head =
-        new THREE.Mesh(
+    new THREE.Mesh(
 
-            new THREE.SphereGeometry(
-                1,
-                16,
-                12
-            ),
+        new THREE.SphereGeometry(
+            1,
+            16,
+            12
+        ),
 
-            new THREE.MeshLambertMaterial({
-                color: 0x914cff
-            })
+        new THREE.MeshLambertMaterial({
+            color: 0x914cff
+        })
 
-        );
+    );
 
 
     head.scale.set(
@@ -2058,55 +1473,9 @@ function createJax() {
     );
 
 
-    head.position.y =
-        3;
+    head.position.y = 3;
 
-
-    npc.add(
-        head
-    );
-
-
-    for(
-        const side of [-1,1]
-    ) {
-
-        const ear =
-            new THREE.Mesh(
-
-                new THREE.ConeGeometry(
-                    .35,
-                    1.8,
-                    8
-                ),
-
-                new THREE.MeshLambertMaterial({
-                    color: 0x914cff
-                })
-
-            );
-
-
-        ear.position.set(
-
-            side * .65,
-
-            4.05,
-
-            0
-
-        );
-
-
-        ear.rotation.z =
-            side * .25;
-
-
-        npc.add(
-            ear
-        );
-
-    }
+    npc.add(head);
 
 
     addEyes(
@@ -2126,61 +1495,53 @@ function createJax() {
 function createRagatha() {
 
     const npc =
-        makeNPC(
-            "ragatha",
-            -15,
-            8
-        );
+    makeNPC(
+        "ragatha",
+        -15,
+        8
+    );
 
 
     const dress =
-        new THREE.Mesh(
+    new THREE.Mesh(
 
-            new THREE.ConeGeometry(
-                1.1,
-                2.5,
-                12
-            ),
+        new THREE.ConeGeometry(
+            1.1,
+            2.5,
+            12
+        ),
 
-            new THREE.MeshLambertMaterial({
-                color: 0xd91b72
-            })
+        new THREE.MeshLambertMaterial({
+            color: 0xd91b72
+        })
 
-        );
-
-
-    dress.position.y =
-        1.3;
-
-
-    npc.add(
-        dress
     );
+
+
+    dress.position.y = 1.3;
+
+    npc.add(dress);
 
 
     const head =
-        new THREE.Mesh(
+    new THREE.Mesh(
 
-            new THREE.SphereGeometry(
-                .9,
-                16,
-                12
-            ),
+        new THREE.SphereGeometry(
+            .9,
+            16,
+            12
+        ),
 
-            new THREE.MeshLambertMaterial({
-                color: 0xd98f72
-            })
+        new THREE.MeshLambertMaterial({
+            color: 0xd98f72
+        })
 
-        );
-
-
-    head.position.y =
-        3;
-
-
-    npc.add(
-        head
     );
+
+
+    head.position.y = 3;
+
+    npc.add(head);
 
 
     addEyes(
@@ -2200,96 +1561,41 @@ function createRagatha() {
 function createGangle() {
 
     const npc =
-        makeNPC(
-            "gangle",
-            14,
-            9
-        );
+    makeNPC(
+        "gangle",
+        14,
+        9
+    );
 
 
-    for(
-        let i = 0;
-        i < 5;
-        i++
-    ) {
+    for(let i = 0; i < 5; i++) {
 
         const ribbon =
-            new THREE.Mesh(
-
-                new THREE.TorusGeometry(
-                    .65 + i * .1,
-                    .08,
-                    6,
-                    20
-                ),
-
-                new THREE.MeshBasicMaterial({
-                    color: 0xff334d
-                })
-
-            );
-
-
-        ribbon.position.y =
-            .7 + i * .55;
-
-
-        ribbon.rotation.x =
-            Math.PI / 2;
-
-
-        npc.add(
-            ribbon
-        );
-
-    }
-
-
-    const mask =
         new THREE.Mesh(
 
-            new THREE.SphereGeometry(
-                .75,
-                16,
-                10
+            new THREE.TorusGeometry(
+                .65 + i*.1,
+                .08,
+                6,
+                20
             ),
 
             new THREE.MeshBasicMaterial({
-                color: 0xffffff
+                color: 0xff334d
             })
 
         );
 
 
-    mask.scale.set(
-        1,
-        .8,
-        .3
-    );
+        ribbon.position.y =
+        .7 + i*.55;
 
+        ribbon.rotation.x =
+        Math.PI/2;
 
-    mask.position.set(
+        npc.add(ribbon);
 
-        0,
-
-        3.2,
-
-        -.4
-
-    );
-
-
-    npc.add(
-        mask
-    );
-
-
-    addEyes(
-        npc,
-        .18,
-        3.25,
-        .25
-    );
+    }
 
 }
 
@@ -2301,61 +1607,53 @@ function createGangle() {
 function createKinger() {
 
     const npc =
-        makeNPC(
-            "kinger",
-            -2,
-            15
-        );
+    makeNPC(
+        "kinger",
+        -2,
+        15
+    );
 
 
     const body =
-        new THREE.Mesh(
+    new THREE.Mesh(
 
-            new THREE.BoxGeometry(
-                1.5,
-                1.8,
-                1.2
-            ),
+        new THREE.BoxGeometry(
+            1.5,
+            1.8,
+            1.2
+        ),
 
-            new THREE.MeshLambertMaterial({
-                color: 0x8b5cff
-            })
+        new THREE.MeshLambertMaterial({
+            color: 0x8b5cff
+        })
 
-        );
-
-
-    body.position.y =
-        1.2;
-
-
-    npc.add(
-        body
     );
+
+
+    body.position.y = 1.2;
+
+    npc.add(body);
 
 
     const head =
-        new THREE.Mesh(
+    new THREE.Mesh(
 
-            new THREE.SphereGeometry(
-                .85,
-                12,
-                8
-            ),
+        new THREE.SphereGeometry(
+            .85,
+            12,
+            8
+        ),
 
-            new THREE.MeshLambertMaterial({
-                color: 0x8b5cff
-            })
+        new THREE.MeshLambertMaterial({
+            color: 0x8b5cff
+        })
 
-        );
-
-
-    head.position.y =
-        2.6;
-
-
-    npc.add(
-        head
     );
+
+
+    head.position.y = 2.6;
+
+    npc.add(head);
 
 
     addEyes(
@@ -2375,89 +1673,75 @@ function createKinger() {
 function createZooble() {
 
     const npc =
-        makeNPC(
-            "zooble",
-            16,
-            8
-        );
+    makeNPC(
+        "zooble",
+        16,
+        8
+    );
 
 
     const colors = [
-
         0xff6b20,
-
         0xffe600,
-
         0x00d9ff,
-
         0xff22aa,
-
         0x9d42ff
-
     ];
 
 
-    for(
-        let i = 0;
-        i < 8;
-        i++
-    ) {
+    for(let i = 0; i < 8; i++) {
 
         const geometry =
-            i % 2 === 0
+        i % 2 === 0
 
-            ?
+        ?
 
-            new THREE.BoxGeometry(
-                .7 + Math.random() * .7,
-                .7 + Math.random() * .7,
-                .7 + Math.random() * .7
-            )
+        new THREE.BoxGeometry(
+            .7 + Math.random()*.7,
+            .7 + Math.random()*.7,
+            .7 + Math.random()*.7
+        )
 
-            :
+        :
 
-            new THREE.SphereGeometry(
-                .55,
-                8,
-                6
-            );
+        new THREE.SphereGeometry(
+            .55,
+            8,
+            6
+        );
 
 
         const part =
-            new THREE.Mesh(
+        new THREE.Mesh(
 
-                geometry,
+            geometry,
 
-                new THREE.MeshLambertMaterial({
+            new THREE.MeshLambertMaterial({
 
-                    color:
-                        colors[
-                            i %
-                            colors.length
-                        ],
+                color:
+                colors[
+                    i % colors.length
+                ],
 
-                    flatShading:
-                        true
+                flatShading: true
 
-                })
+            })
 
-            );
+        );
 
 
         part.position.set(
 
-            (Math.random() - .5) * 1.8,
+            (Math.random()-.5)*1.8,
 
-            .7 + i * .38,
+            .7+i*.38,
 
-            (Math.random() - .5) * 1.3
+            (Math.random()-.5)*1.3
 
         );
 
 
-        npc.add(
-            part
-        );
+        npc.add(part);
 
     }
 
@@ -2470,44 +1754,33 @@ function createZooble() {
 
 function createParticles() {
 
-    const geometry =
-        new THREE.BufferGeometry();
-
-
     const positions = [];
 
 
-    for(
-        let i = 0;
-        i < 1800;
-        i++
-    ) {
+    for(let i = 0; i < 1800; i++) {
 
         const radius =
-            40 +
-            Math.random() *
-            180;
-
+        40 + Math.random()*180;
 
         const angle =
-            Math.random() *
-            Math.PI *
-            2;
+        Math.random()*Math.PI*2;
 
 
         positions.push(
 
-            Math.cos(angle) *
-            radius,
+            Math.cos(angle)*radius,
 
-            Math.random() * 60,
+            Math.random()*60,
 
-            Math.sin(angle) *
-            radius
+            Math.sin(angle)*radius
 
         );
 
     }
+
+
+    const geometry =
+    new THREE.BufferGeometry();
 
 
     geometry.setAttribute(
@@ -2523,17 +1796,17 @@ function createParticles() {
 
 
     const material =
-        new THREE.PointsMaterial({
+    new THREE.PointsMaterial({
 
-            color: 0xffffff,
+        color: 0xffffff,
 
-            size: .12,
+        size: .12,
 
-            transparent: true,
+        transparent: true,
 
-            opacity: .6
+        opacity: .6
 
-        });
+    });
 
 
     scene.add(
@@ -2549,169 +1822,35 @@ function createParticles() {
 
 
 /* =========================================================
-   SCENERY
+   CONTROLS
 ========================================================= */
 
-function createScenery() {
-
-    const colors = [
-
-        0xff008c,
-
-        0x00ffff,
-
-        0xffff00,
-
-        0x7d00ff,
-
-        0x00ff66
-
-    ];
-
-
-    for(
-        let i = 0;
-        i < 100;
-        i++
-    ) {
-
-        const geometry =
-
-            Math.random() > .5
-
-            ?
-
-            new THREE.BoxGeometry(
-
-                1 +
-                Math.random() * 3,
-
-                1 +
-                Math.random() * 5,
-
-                1 +
-                Math.random() * 3
-
-            )
-
-            :
-
-            new THREE.ConeGeometry(
-
-                1 +
-                Math.random() * 2,
-
-                3 +
-                Math.random() * 6,
-
-                6
-
-            );
-
-
-        const object =
-            new THREE.Mesh(
-
-                geometry,
-
-                new THREE.MeshLambertMaterial({
-
-                    color:
-                        colors[
-                            Math.floor(
-                                Math.random() *
-                                colors.length
-                            )
-                        ],
-
-                    flatShading:
-                        true
-
-                })
-
-            );
-
-
-        const angle =
-            Math.random() *
-            Math.PI *
-            2;
-
-
-        const radius =
-            30 +
-            Math.random() *
-            150;
-
-
-        object.position.set(
-
-            Math.cos(angle) *
-            radius,
-
-            Math.random() * 7,
-
-            Math.sin(angle) *
-            radius
-
-        );
-
-
-        object.rotation.set(
-
-            Math.random() * 3,
-
-            Math.random() * 3,
-
-            Math.random() * 3
-
-        );
-
-
-        object.castShadow =
-            true;
-
-
-        scene.add(
-            object
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   INPUT
-========================================================= */
-
-function setupInput() {
+function setupControls() {
 
     window.addEventListener(
         "keydown",
         event => {
 
-            keys[event.code] =
-                true;
+            keys[event.code] = true;
 
 
             if(
                 event.code === "Space" &&
-                grounded
+                grounded &&
+                gameStarted
             ) {
 
-                velocityY =
-                    10;
+                velocityY = 10;
 
-                grounded =
-                    false;
+                grounded = false;
 
             }
 
 
             if(
                 event.code === "KeyE" &&
-                canInteract
+                canInteract &&
+                gameStarted
             ) {
 
                 openDialogue();
@@ -2737,8 +1876,7 @@ function setupInput() {
         "keyup",
         event => {
 
-            keys[event.code] =
-                false;
+            keys[event.code] = false;
 
         }
     );
@@ -2750,33 +1888,17 @@ function setupInput() {
     );
 
 
-    enterButton.onclick =
-        () => {
-
-            started =
-                true;
-
-            intro.classList.add(
-                "hidden"
-            );
-
-            system.innerText =
-                "SYSTEM: 7 CHARACTERS ONLINE";
-
-        };
-
-
-    sendButton.onclick =
-        sendMessage;
+    send.addEventListener(
+        "click",
+        sendMessage
+    );
 
 
     message.addEventListener(
         "keydown",
         event => {
 
-            if(
-                event.key === "Enter"
-            ) {
+            if(event.key === "Enter") {
 
                 sendMessage();
 
@@ -2786,107 +1908,81 @@ function setupInput() {
     );
 
 
-    closeDialogue.onclick =
+    closeDialogue.addEventListener(
+        "click",
         () => {
 
             dialogue.classList.remove(
                 "open"
             );
 
-        };
+        }
+    );
 
 }
 
 
 /* =========================================================
-   PLAYER UPDATE
+   PLAYER
 ========================================================= */
 
 function updatePlayer(delta) {
 
-    if(!started) {
-        return;
-    }
+    if(!gameStarted) return;
 
 
     let x = 0;
-
     let z = 0;
 
 
     if(keys.KeyA) x--;
-
     if(keys.KeyD) x++;
-
     if(keys.KeyW) z--;
-
     if(keys.KeyS) z++;
 
 
     const length =
-        Math.hypot(
-            x,
-            z
-        );
+    Math.hypot(x,z);
 
 
     if(length > 0) {
 
         x /= length;
-
         z /= length;
 
     }
 
 
     const speed =
-
-        keys.ShiftLeft ||
-        keys.ShiftRight
-
-        ?
-
-        RUN_SPEED
-
-        :
-
-        MOVE_SPEED;
+    keys.ShiftLeft ||
+    keys.ShiftRight
+    ? 12
+    : 7;
 
 
     player.position.x +=
-        x *
-        speed *
-        delta;
+    x * speed * delta;
 
 
     player.position.z +=
-        z *
-        speed *
-        delta;
+    z * speed * delta;
 
 
     velocityY +=
-        GRAVITY *
-        delta;
+    -25 * delta;
 
 
     player.position.y +=
-        velocityY *
-        delta;
+    velocityY * delta;
 
 
-    if(
-        player.position.y < 0
-    ) {
+    if(player.position.y < 0) {
 
-        player.position.y =
-            0;
+        player.position.y = 0;
 
-        velocityY =
-            0;
+        velocityY = 0;
 
-        grounded =
-            true;
+        grounded = true;
 
     }
 
@@ -2894,57 +1990,61 @@ function updatePlayer(delta) {
     if(length > 0) {
 
         player.rotation.y =
-            Math.atan2(
-                x,
-                -z
-            );
+        Math.atan2(
+            x,
+            -z
+        );
 
     }
 
 
+    updateCamera(delta);
+
+    updateNearestNPC();
+
+}
+
+
+/* =========================================================
+   CAMERA
+========================================================= */
+
+function updateCamera(delta) {
+
     const target =
-        new THREE.Vector3(
+    new THREE.Vector3(
 
-            player.position.x,
+        player.position.x,
 
-            player.position.y + 2.2,
+        player.position.y + 2.2,
 
-            player.position.z
+        player.position.z
 
-        );
+    );
 
 
     const desired =
-        new THREE.Vector3(
+    new THREE.Vector3(
 
-            player.position.x,
+        player.position.x,
 
-            player.position.y + 7,
+        player.position.y + 7,
 
-            player.position.z + 11
+        player.position.z + 11
 
-        );
+    );
 
 
     camera.position.lerp(
 
         desired,
 
-        1 -
-        Math.pow(
-            .001,
-            delta
-        )
+        1 - Math.pow(.001,delta)
 
     );
 
 
-    camera.lookAt(
-        target
-    );
-
-
-    updateNearestNPC();
+    camera.lookAt(target);
 
 }
 
@@ -2957,30 +2057,25 @@ function updateNearestNPC() {
 
     let nearest = null;
 
-    let nearestDistance =
-        Infinity;
+    let nearestDistance = Infinity;
 
 
-    for(
-        const npc of npcs
-    ) {
+    for(const npc of npcs) {
 
         const distance =
-            player.position.distanceTo(
-                npc.position
-            );
+        player.position.distanceTo(
+            npc.position
+        );
 
 
         if(
-            distance <
-            nearestDistance
+            distance < nearestDistance
         ) {
 
             nearestDistance =
-                distance;
+            distance;
 
-            nearest =
-                npc;
+            nearest = npc;
 
         }
 
@@ -2992,11 +2087,9 @@ function updateNearestNPC() {
         nearestDistance < 9
     ) {
 
-        activeNPC =
-            nearest;
+        activeNPC = nearest;
 
-        canInteract =
-            true;
+        canInteract = true;
 
 
         interaction.classList.add(
@@ -3005,7 +2098,9 @@ function updateNearestNPC() {
 
 
         characterName.innerText =
-            nearest.userData.label;
+        characters[
+            nearest.userData.id
+        ].name;
 
 
         characterName.classList.add(
@@ -3013,18 +2108,18 @@ function updateNearestNPC() {
         );
 
 
-        locationElement.innerText =
-            nearest.userData.label;
+        locationText.innerText =
+        characters[
+            nearest.userData.id
+        ].name;
 
     }
 
     else {
 
-        activeNPC =
-            null;
+        activeNPC = null;
 
-        canInteract =
-            false;
+        canInteract = false;
 
 
         interaction.classList.remove(
@@ -3037,8 +2132,8 @@ function updateNearestNPC() {
         );
 
 
-        locationElement.innerText =
-            "THE HUB";
+        locationText.innerText =
+        "THE HUB";
 
     }
 
@@ -3049,125 +2144,65 @@ function updateNearestNPC() {
    NPC ANIMATION
 ========================================================= */
 
-function updateNPCs(time, delta) {
+function updateNPCs(time,delta) {
 
-    for(
-        const npc of npcs
-    ) {
+    if(pomniMixer) {
+
+        pomniMixer.update(delta);
+
+    }
+
+
+    for(const npc of npcs) {
 
         const id =
-            npc.userData.id;
+        npc.userData.id;
 
 
-        const phase =
-            npc.userData.phase;
-
-
-        /* POMNI */
-
-        if(
-            id === "pomni"
-        ) {
-
-            if(
-                npc.userData.mixer
-            ) {
-
-                npc.userData.mixer.update(
-                    delta
-                );
-
-            }
-
+        if(id === "pomni") {
 
             npc.rotation.y =
-                Math.sin(
-                    time * .5
-                ) * .2;
+            Math.sin(time*.5)*.2;
 
         }
 
 
-        /* JAX */
-
-        else if(
-            id === "jax"
-        ) {
+        if(id === "jax") {
 
             npc.rotation.y =
-                Math.sin(
-                    time * .7 +
-                    phase
-                ) * .3;
-
-            npc.position.y =
-                Math.sin(
-                    time * 1.4 +
-                    phase
-                ) * .04;
+            Math.sin(time*.7)*.3;
 
         }
 
 
-        /* GANGLE */
-
-        else if(
-            id === "gangle"
-        ) {
+        if(id === "gangle") {
 
             npc.rotation.z =
-                Math.sin(
-                    time * 1.5 +
-                    phase
-                ) * .12;
+            Math.sin(time*1.5)*.12;
 
         }
 
 
-        /* KINGER */
-
-        else if(
-            id === "kinger"
-        ) {
+        if(id === "kinger") {
 
             npc.rotation.y =
-                Math.sin(
-                    time * 1.8 +
-                    phase
-                ) * .7;
+            Math.sin(time*1.8)*.7;
 
         }
 
 
-        /* ZOOBLE */
-
-        else if(
-            id === "zooble"
-        ) {
+        if(id === "zooble") {
 
             npc.rotation.y =
-                time * .4 +
-                phase;
+            time*.4;
 
         }
 
 
-        /* CAINE */
-
-        else if(
-            id === "caine"
-        ) {
+        if(id === "caine") {
 
             npc.position.y =
-                Math.sin(
-                    time * 2 +
-                    phase
-                ) * .3;
-
-            npc.rotation.y =
-                Math.sin(
-                    time * .5
-                ) * .4;
+            Math.sin(time*2)*.3;
 
         }
 
@@ -3182,9 +2217,23 @@ function updateNPCs(time, delta) {
 
 function openDialogue() {
 
-    if(!activeNPC) {
-        return;
-    }
+    if(!activeNPC) return;
+
+
+    const id =
+    activeNPC.userData.id;
+
+
+    const character =
+    characters[id];
+
+
+    speaker.innerText =
+    character.name;
+
+
+    dialogueText.innerText =
+    character.greeting;
 
 
     dialogue.classList.add(
@@ -3192,54 +2241,7 @@ function openDialogue() {
     );
 
 
-    const id =
-        activeNPC.userData.id;
-
-
-    const data =
-        characters[id];
-
-
-    speaker.innerText =
-        data.name;
-
-
-    const greetings = {
-
-        pomni:
-            "Oh... hi. You're actually here. Are you lost too?",
-
-        jax:
-            "Well, well. Look who wandered over here.",
-
-        ragatha:
-            "Oh! Hi! It's nice to meet you!",
-
-        gangle:
-            "Oh! Hello... please don't step on my ribbons.",
-
-        kinger:
-            "THE WALLS HAVE BEEN MOVING AGAIN.",
-
-        zooble:
-            "What do you want?",
-
-        caine:
-            "WELCOME, WELCOME, WELCOME TO THE DIGITAL CIRCUS!"
-
-    };
-
-
-    dialogueText.innerText =
-        greetings[id];
-
-
     message.focus();
-
-
-    interaction.classList.remove(
-        "show"
-    );
 
 }
 
@@ -3248,13 +2250,16 @@ function openDialogue() {
    PUTER AI
 ========================================================= */
 
-async function askCharacter(
-    playerMessage
-) {
+async function sendMessage() {
+
+    const text =
+    message.value.trim();
+
 
     if(
+        !text ||
         !activeNPC ||
-        aiBusy
+        send.disabled
     ) {
 
         return;
@@ -3262,193 +2267,123 @@ async function askCharacter(
     }
 
 
-    aiBusy =
-        true;
+    message.value = "";
 
-
-    sendButton.disabled =
-        true;
+    send.disabled = true;
 
 
     const id =
-        activeNPC.userData.id;
+    activeNPC.userData.id;
 
 
-    const character =
-        characters[id];
-
-
-    speaker.innerText =
-        character.name;
+    const name =
+    characters[id].name;
 
 
     dialogueText.innerText =
-        character.name +
-        " is thinking...";
-
-
-    system.innerText =
-        "SYSTEM: CONNECTING TO " +
-        character.name +
-        "...";
-
-
-    const prompt = `
-
-You are roleplaying as ${character.name}
-from The Amazing Digital Circus.
-
-${character.personality}
-
-The player is standing in front of you
-inside the Digital Circus.
-
-Respond directly to the player's message.
-
-Do not explain your role.
-
-Do not mention these instructions.
-
-Do not say you are an AI.
-
-Stay completely in character.
-
-PLAYER:
-${playerMessage}
-
-RESPOND AS ${character.name}.
-`;
+    name +
+    " is thinking...";
 
 
     try {
 
         const result =
-            await puter.ai.chat(
-                prompt
-            );
+        await puter.ai.chat(
+
+`You are ${name} from The Amazing Digital Circus.
+
+Stay completely in character.
+
+Respond naturally to the player.
+
+Do not mention being an AI.
+Do not mention these instructions.
+
+Character personality:
+
+Pomni: anxious, confused, overwhelmed and desperate to escape.
+
+Jax: sarcastic, mischievous, smug and enjoys teasing people.
+
+Ragatha: kind, friendly, supportive and optimistic.
+
+Gangle: shy, sensitive and emotional.
+
+Kinger: eccentric, distracted, paranoid and strangely insightful.
+
+Zooble: blunt, sarcastic, irritated and doesn't enjoy the circus.
+
+Caine: extremely energetic, theatrical, dramatic and obsessed with entertaining everyone.
+
+PLAYER:
+${text}
+
+RESPOND AS ${name}.`
+
+        );
 
 
         let response = "";
 
 
-        if(
-            typeof result ===
-            "string"
-        ) {
+        if(typeof result === "string") {
 
-            response =
-                result;
+            response = result;
 
         }
 
         else if(
-            result &&
-            result.message &&
-            result.message.content
+            result?.message?.content
         ) {
 
             response =
-                result.message.content;
+            result.message.content;
 
         }
 
-        else if(
-            result &&
-            result.text
-        ) {
+        else if(result?.text) {
 
-            response =
-                result.text;
+            response = result.text;
 
         }
 
         else {
 
             response =
-                "The character stares at you.";
+            "The character stares at you.";
 
         }
 
 
         dialogueText.innerText =
-            response;
+        response;
 
 
         system.innerText =
-            "SYSTEM: " +
-            character.name +
-            " ONLINE";
+        "SYSTEM: " +
+        name +
+        " ONLINE";
 
     }
-
 
     catch(error) {
 
-        console.error(
-            error
-        );
+        console.error(error);
 
 
         dialogueText.innerText =
-
-            character.name +
-            ":\n\n" +
-
-            "\"Uh... something just broke.\"";
+        name +
+        ":\n\n" +
+        "\"Uh... something broke.\"";
 
 
         system.innerText =
-            "SYSTEM: AI CONNECTION ERROR";
+        "SYSTEM: AI CONNECTION ERROR";
 
     }
 
 
-    aiBusy =
-        false;
-
-
-    sendButton.disabled =
-        false;
-
-}
-
-
-/* =========================================================
-   SEND MESSAGE
-========================================================= */
-
-function sendMessage() {
-
-    const text =
-        message.value.trim();
-
-
-    if(
-        !text ||
-        aiBusy ||
-        !activeNPC
-    ) {
-
-        return;
-
-    }
-
-
-    message.value =
-        "";
-
-
-    dialogueText.innerText =
-
-        "YOU:\n" +
-        text +
-        "\n\n" +
-        "Waiting for response...";
-
-
-    askCharacter(
-        text
-    );
+    send.disabled = false;
 
 }
 
@@ -3460,12 +2395,9 @@ function sendMessage() {
 function resize() {
 
     camera.aspect =
-        innerWidth /
-        innerHeight;
-
+    innerWidth / innerHeight;
 
     camera.updateProjectionMatrix();
-
 
     renderer.setSize(
         innerWidth,
@@ -3476,7 +2408,7 @@ function resize() {
 
 
 /* =========================================================
-   GAME LOOP
+   LOOP
 ========================================================= */
 
 function animate() {
@@ -3487,20 +2419,17 @@ function animate() {
 
 
     const delta =
-        Math.min(
-            clock.getDelta(),
-            .05
-        );
+    Math.min(
+        clock.getDelta(),
+        .05
+    );
 
 
     const time =
-        clock.elapsedTime;
+    clock.elapsedTime;
 
 
-    updatePlayer(
-        delta
-    );
-
+    updatePlayer(delta);
 
     updateNPCs(
         time,
@@ -3517,7 +2446,7 @@ function animate() {
 
 
 /* =========================================================
-   START
+   START 3D WORLD
 ========================================================= */
 
 init();
